@@ -40,7 +40,7 @@ addLayer("k", {
             title: "Exponentially speeding up",
             description: "Meters multiplies itself",
             cost: new Decimal(5),
-            tooltip: "Meters*((Meters^0.3)+1)",
+            tooltip: "Meters*((Meters+1)^0.3)",
             effect() {
                 let k12 = Decimal.pow(Decimal.add(player.points, 1), 0.3)
                 return k12
