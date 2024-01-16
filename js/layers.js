@@ -42,7 +42,7 @@ addLayer("k", {
             cost: new Decimal(5),
             tooltip: "Meters*((Meters^0.3)+1)",
             effect() {
-                let k12 = Decimal.add(Decimal.pow(player.points, 0.3), 1)
+                let k12 = Decimal.pow(Decimal.add(player.points, 1), 0.3)
                 return k12
             },
             effectDisplay() {
