@@ -15,6 +15,7 @@ addLayer("k", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasUpgrade("k", 14)) mult = mult.times(upgradeEffect("k", 14))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -22,14 +23,14 @@ addLayer("k", {
     },
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "k", description: "P: Reset for prestige points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "k", description: "k: Reset for Knowledge", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return true},
 
     upgrades: {
         11: {
             title: "Drinkin Energy Bars",
-            description: "Meters are multiplied by 2",
+            description: "Distance is multiplied by 2",
             cost: new Decimal(2),
             tooltip: "Meters*2",
             effect() {
@@ -38,9 +39,9 @@ addLayer("k", {
         },
         12: {
             title: "Exponentially speeding up",
-            description: "Meters multiplies itself",
+            description: "Distance multiplies itself",
             cost: new Decimal(5),
-            tooltip: "Meters*((Meters+1)^0.3)",
+            tooltip: "(Meters+1)^0.3",
             effect() {
                 let k12 = Decimal.pow(Decimal.add(player.points, 1), 0.3)
                 return k12
@@ -50,9 +51,9 @@ addLayer("k", {
             }},
         13: {
             title: "Working out",
-            description: "Meters are boosted by total time",
+            description: "Distance is boosted by total time",
             cost: new Decimal(10),
-            tooltip: "Meters*(log_4(timespent))",
+            tooltip: "log_4(timespent)",
             effect() {
                 let k13 = Decimal.log(Decimal.add(player.timePlayed, 4), 4)
                 return k13
@@ -60,8 +61,45 @@ addLayer("k", {
             effectDisplay() {
                  return format(upgradeEffect(this.layer, this.id))+"x"
              }
-            }
+            },
+        14: {
+            title: "Critical Thinking",
+            description: "Knowledge is multiplied by distance",
+            cost: new Decimal(25),
+            tooltip: "Knowledge*(sqrt(Meters))",
+            effect() {
+            let k12 = Decimal.pow(Decimal.add(player.points, 1), 0.5)
+                 return k12
+            },
+            effectDisplay() {
+                   return format(upgradeEffect(this.layer, this.id))+"x"
+            }}
         }}
 )
 
-
+// A side layer with achievements, with no prestige
+addLayer("a", {
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),
+    }},
+    color: "yellow",
+    resource: "achievements", 
+    row: "side",
+    tooltip() { // Optional, tooltip displays when the layer is locked
+        return ("Achievements")
+    },
+    achievementPopups: true,
+    achievements: {
+        11: {
+            name: "Did i blend it?",
+            done() {if (hasUpgrade("k", 11)) {return true}}, 
+            goalTooltip: "Get the first upgrade.", // Shows when achievement is not completed
+            doneTooltip: "Get the first upgrade.", // Showed when the achievement is completed
+            
+            onComplete() {
+                player[this.layer].points = Decimal.add(player[this.layer].points, 1)
+            }
+        }},
+    midsection: ["grid", "blank"],
+    })
