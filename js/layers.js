@@ -47,21 +47,21 @@ addLayer("k", {
             },
             effectDisplay() {
                 return format(upgradeEffect(this.layer, this.id))+"x"
-            },
+            }},
         13: {
             title: "Working out",
             description: "Meters are boosted by total time",
-            cost: new Decimal(20),
+            cost: new Decimal(10),
             tooltip: "Meters*(log_4(timespent))",
             effect() {
-                let k13 = Decimal.div(Decimal.log(player.timePlayed), Decimal.log(new Decimal(4)))
+                let k13 = Decimal.div(Decimal.log(new Decimal(player.timePlayed)), Decimal.log(4))
                 return k13
             },
             effectDisplay() {
                  return format(upgradeEffect(this.layer, this.id))+"x"
-             },
-            },
+             }
+            }
         }}
-})
+)
 
 
