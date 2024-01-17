@@ -13,18 +13,22 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1 Indev",
+	num: "0.1.1 Indev",
 	name: "Indev",
 }
 
 let changelog = `<h1>Changelog:</h1><br><br>
 
-	<h3>v0.1</h3><br>
+
+	<h3>v0.1.1</h3><br>
+	- Added 1 upgrade
+	<br>
+	- Added 1 Achievement
+	<br><br><h3>v0.1</h3><br>
 	- Added 2 more upgrades
 	<br>
-	- Added Achievements
-	<br><br>
-	<h3>v0.0</h3><br>
+	- Added 1 Achievement
+	<br><br><h3>v0.0</h3><br>
 	- Added 2 upgrades
 	<br>
 	- Added a layer
@@ -54,6 +58,7 @@ function getPointGen() {
 	if (hasUpgrade("k", 11)) gain = gain.times(upgradeEffect("k", 11))
 	if (hasUpgrade("k", 12)) gain = gain.times(upgradeEffect("k", 12))
 	if (hasUpgrade("k", 13)) gain = gain.times(upgradeEffect("k", 13))
+	if (hasUpgrade("k", 15)) gain = gain.times(upgradeEffect("k", 15))
 	return gain
 }
 

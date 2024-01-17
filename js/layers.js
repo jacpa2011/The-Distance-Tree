@@ -43,8 +43,8 @@ addLayer("k", {
             cost: new Decimal(5),
             tooltip: "(Meters+1)^0.3",
             effect() {
-                let k12 = Decimal.pow(Decimal.add(player.points, 1), 0.3)
-                return k12
+                let output = Decimal.pow(Decimal.add(player.points, 1), 0.3)
+                return output
             },
             effectDisplay() {
                 return format(upgradeEffect(this.layer, this.id))+"x"
@@ -53,10 +53,10 @@ addLayer("k", {
             title: "Working out",
             description: "Distance is boosted by total time",
             cost: new Decimal(10),
-            tooltip: "log_4(timespent)",
+            tooltip: "log_4(timespent+4)",
             effect() {
-                let k13 = Decimal.log(Decimal.add(player.timePlayed, 4), 4)
-                return k13
+                let output = Decimal.log(Decimal.add(player.timePlayed, 4), 4)
+                return output
             },
             effectDisplay() {
                  return format(upgradeEffect(this.layer, this.id))+"x"
@@ -64,16 +64,29 @@ addLayer("k", {
             },
         14: {
             title: "Critical Thinking",
-            description: "Knowledge is multiplied by distance",
+            description: "Knowledge is multiplied by Distance",
             cost: new Decimal(25),
-            tooltip: "Knowledge*(sqrt(Meters))",
+            tooltip: "sqrt(Meters+1)",
             effect() {
-            let k12 = Decimal.pow(Decimal.add(player.points, 1), 0.5)
-                 return k12
+            let output = Decimal.pow(Decimal.add(player.points, 1), 0.5)
+                 return output
             },
             effectDisplay() {
                    return format(upgradeEffect(this.layer, this.id))+"x"
-            }}
+            }},
+            15: {
+                title: "Critical Running",
+                description: "Distance is multiplied by Knowledge",
+                cost: new Decimal(50),
+                tooltip: "(Knowledge+1)^0.25",
+                effect() {
+                    let output = Decimal.pow(Decimal.add(player.k.points, 1), 0.25)
+                    return output
+                },
+                effectDisplay() {
+                     return format(upgradeEffect(this.layer, this.id))+"x"
+                 }
+                }
         }}
 )
 
@@ -99,7 +112,16 @@ addLayer("a", {
             
             onComplete() {
                 player[this.layer].points = Decimal.add(player[this.layer].points, 1)
-            }
-        }},
+            }},
+         12: {
+             name: "Faster then Usian Bolt",
+             done() {if (hasUpgrade("k", 15)) {return true}}, 
+            goalTooltip: "Get the fifth upgrade.", // Shows when achievement is not completed
+             doneTooltip: "Get the fifth upgrade.", // Showed when the achievement is completed
+             
+             onComplete() {
+                player[this.layer].points = Decimal.add(player[this.layer].points, 1)
+            }}
+        },
     midsection: ["grid", "blank"],
     })
