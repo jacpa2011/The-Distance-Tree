@@ -54,7 +54,7 @@ addLayer("k", {
             cost: new Decimal(10),
             tooltip: "Meters*(log_4(timespent))",
             effect() {
-                let k13 = Decimal.div(Decimal.log(new Decimal(player.timePlayed)), Decimal.log(4))
+                let k13 = Decimal.log(Decimal.add(player.timePlayed, 4), 4)
                 return k13
             },
             effectDisplay() {
