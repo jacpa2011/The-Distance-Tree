@@ -73,3 +73,11 @@ function achievementEffect(layer, id) {
 function gridEffect(layer, id) {
 	return (gridRun(layer, 'getEffect', player[layer].grid[id], id))
 }
+
+function autoBuyableDisplay(desc, layer, id, baseName = "", limit = "") {
+    return (desc + "<br>Cost: "+ (tmp[layer].buyables[id].cost.lt(0.1) ? formatSmall(tmp[layer].buyables[id].cost) : format(tmp[layer].buyables[id].cost)) +baseName+". Amount: "+ format(getBuyableAmount(layer, id)) + limit +". ")
+}
+
+function autoThisBuyableDisplay(desc, thisBuyable, baseName = "", limit = "") {
+    return autoBuyableDisplay(desc, thisBuyable.layer, thisBuyable.id, baseName, limit)
+} 
