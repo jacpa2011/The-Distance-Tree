@@ -25,6 +25,8 @@ let changelog = `<h1>Changelog:</h1><br><br>
 	- Added another layer
 	<br>
 	- Added a buyable
+	<br>
+	- Added 1 Achievement
 	<br><br><h3>v0.1.1</h3><br>
 	- Added 1 upgrade
 	<br>

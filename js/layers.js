@@ -217,7 +217,7 @@ addLayer("a", {
             onComplete() {
                 player[this.layer].points = Decimal.add(player[this.layer].points, 1)
             }},
-         12: {
+        12: {
             name: "Faster then Usian Bolt",
             done() {if (hasUpgrade("k", 15)) {return true}}, 
             goalTooltip: "Get the fifth upgrade.", // Shows when achievement is not completed
@@ -226,15 +226,15 @@ addLayer("a", {
              onComplete() {
                 player[this.layer].points = Decimal.add(player[this.layer].points, 1)
             }},
-            13: {
-                name: "POWER!!!",
-                done() {if (player.p.points.gte(0)) {return true}}, 
-                goalTooltip: "Get the fifth upgrade.", // Shows when achievement is not completed
-                doneTooltip: "Get the fifth upgrade.", // Showed when the achievement is completed
+        13: {
+            name: "POWER!!!",
+            done() {if (player.p.points.gte(1)) {return true}}, 
+            goalTooltip: "Get the fifth upgrade.", // Shows when achievement is not completed
+            doneTooltip: "Get the fifth upgrade.", // Showed when the achievement is completed
                  
-                 onComplete() {
-                    player[this.layer].points = Decimal.add(player[this.layer].points, 1)
-                }}
-        },
+            onComplete() {
+                player[this.layer].points = Decimal.add(player[this.layer].points, 1)
+            }},
+            },
     midsection: ["grid", "blank"],
     })
