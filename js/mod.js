@@ -30,6 +30,8 @@ let changelog = `<h1>Changelog:</h1><br>
 	- Reduced the cost of power
 	<br>
 	- Reduced the buff of <b>Turning books into energy</b>
+	<br>
+	- Added 1 milestone
 	<br><br><h3>v0.1.2</h3><br>
 	- Added 1 upgrade
 	<br>
