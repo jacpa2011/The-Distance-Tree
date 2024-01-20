@@ -33,6 +33,10 @@ addLayer("k", {
             cost: new Decimal(2),
             tooltip: "Meters*2",
             effect() {
+                if (hasUpgrade("p", 12)) {
+                    let output = upgradeEffect("p", 12).times(2)
+                    return output
+                }
                 return 2
             }
         },
@@ -42,7 +46,7 @@ addLayer("k", {
             cost: new Decimal(5),
             tooltip: "(Meters+1)^0.3",
             effect() {
-                let output = Decimal.pow(Decimal.add(player.points, 1), 0.3)
+                let output = Decimal.pow(player.points.add(1), 0.3)
                 return output
             },
             effectDisplay() {
@@ -63,7 +67,7 @@ addLayer("k", {
             cost: new Decimal(10),
             tooltip: "log_4(timespent+4)",
             effect() {
-                let output = Decimal.log(Decimal.add(player.timePlayed, 4), 4)
+                let output = Decimal.log(Decimal.add(player.timePlayed,4), 4)
                 return output
             },
             effectDisplay() {
@@ -121,7 +125,13 @@ addLayer("k", {
                 }
             }
             }
-        }}
+        },
+        passiveGeneration() {
+            if (hasMilestone("p", 0)) {
+                return 0.1
+            }
+        }
+    }
 )
 
 addLayer("p", {
@@ -131,14 +141,15 @@ addLayer("p", {
     startData() { return {
         unlocked: true,
 		points: new Decimal(0),
+        total: new Decimal(0),
     }},
     color: "#F4BC1C",
-    requires: new Decimal(1000), // Can be a function that takes requirement increases into account
+    requires: new Decimal(500), // Can be a function that takes requirement increases into account
     resource: "Power", // Name of prestige currency
     baseResource: "Knowledge", // Name of resource prestige is based on
     baseAmount() {return player.k.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 0.5, // Prestige currency exponent
+    exponent: 0.4, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         return mult
@@ -169,9 +180,30 @@ addLayer("p", {
             description: "Unlock a new buyable",
             cost: new Decimal(1),
             effect() {
-            let output = Decimal.pow(Decimal.add(player.k.points, 1), 0.3)
+            let output = Decimal.pow(player.k.points.add(1), 0.3)
             return output
             }
+        },
+        12: {
+            title: "I like energy bars",
+            description: "Boost <b>Drinkin Energy Bars</b> based on OoMs of distance",
+            cost: new Decimal(3),
+            effect() {
+            let output = Decimal.pow(1.14, Decimal.floor(Decimal.log(player.points.add(1), 10))).max(1)
+            return output
+            },
+            unlocked() {
+                if (hasUpgrade("p", 11)) {
+                    player.UnlockedUpgrades.push(`p12`)
+                    return true
+                }
+                if (player.UnlockedUpgrades.includes(`p12`)) {
+                    return true
+                }
+            },
+            effectDisplay() {
+                return format(upgradeEffect(this.layer, this.id))+"x"
+            },
         },
     },
     buyables: {
@@ -187,10 +219,18 @@ addLayer("p", {
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             effect() {
-                let output = Decimal.pow(2, getBuyableAmount(this.layer, this.id))
+                let output = Decimal.pow(2, getBuyableAmount(this.layer, this.id).div(2))
                 return output
             }
         },
+    },
+    milestones: {
+        0: {
+            unlocked() {return player.p.points.gte(1)},
+            requirementDescription: "Get 2 total Power",
+            effectDescription: "Gain 10% of Knowledge per second",
+            done() { return player.p.total.gte(1) }
+        }
     }
 })
 
@@ -235,6 +275,15 @@ addLayer("a", {
             onComplete() {
                 player[this.layer].points = Decimal.add(player[this.layer].points, 1)
             }},
+        14: {
+            name: "Light-millisecond(s)",
+            done() {if (player.points.gte(299792.46)) {return true}}, 
+            goalTooltip: "Get around 300000 meters.", // Shows when achievement is not completed
+            doneTooltip: "Get around 300000 meters.", // Showed when the achievement is completed
+                     
+            onComplete() {
+                player[this.layer].points = Decimal.add(player[this.layer].points, 1)
+            }}
             },
     midsection: ["grid", "blank"],
     })

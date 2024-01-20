@@ -13,12 +13,23 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.2 Alpha",
+	num: "0.1.3 Alpha",
 	name: "Indev",
 }
 
-let changelog = `<h1>Changelog:</h1><br><br>
+let changelog = `<h1>Changelog:</h1><br>
+<font color="red">
+<h2>Spoiler warning!</h2>
+</font><br>
 
+	<br><br><h3>v0.1.3</h3><br>
+	- Added 1 upgrade
+	<br>
+	- Added 1 Achievement
+	<br>
+	- Reduced the cost of power
+	<br>
+	- Reduced the buff of <b>Turning books into energy<b>
 	<br><br><h3>v0.1.2</h3><br>
 	- Added 1 upgrade
 	<br>
@@ -96,7 +107,7 @@ var backgroundStyle = {
 
 // You can change this if you have things that can be messed up by long tick lengths
 function maxTickLength() {
-	return(3600) // Default is 1 hour which is just arbitrarily large
+	return 3600 // Default is 1 hour which is just arbitrarily large
 }
 
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
