@@ -269,8 +269,8 @@ addLayer("a", {
         13: {
             name: "POWER!!!",
             done() {if (player.p.points.gte(1)) {return true}}, 
-            goalTooltip: "Get the fifth upgrade.", // Shows when achievement is not completed
-            doneTooltip: "Get the fifth upgrade.", // Showed when the achievement is completed
+            goalTooltip: "Get Power for the first time.", // Shows when achievement is not completed
+            doneTooltip: "Get Power for the first time.", // Showed when the achievement is completed
                  
             onComplete() {
                 player[this.layer].points = Decimal.add(player[this.layer].points, 1)

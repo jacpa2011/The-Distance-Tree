@@ -101,7 +101,7 @@ var displayThings = [
 	},
 	function() {
 		if (player.points.gte(1e6)) {
-			return `Distance is softcapped by ^${new Decimal(1).sub(Decimal.log(player.points.sub(1e6), 10).div(30))}`
+			return `<font color="red">Distance is softcapped by ^${new Decimal(1).sub(Decimal.log(player.points.sub(1e6), 10).div(30))}</font>`
 		}
 	}
 ]
