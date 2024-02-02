@@ -13,15 +13,18 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.3 Alpha",
-	name: "Indev",
+	num: "0.1.4 Alpha",
+	name: "Alpha",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
 <font color="red">
 <h2>Spoiler warning!</h2>
 </font><br>
-
+	<br><br><h3>v0.1.4</h3><br>
+	- Added A softcap after 1e6 meters
+	<br>
+	- Updated the description of <b>Diet</b>
 	<br><br><h3>v0.1.3</h3><br>
 	- Added 1 upgrade
 	<br>
@@ -80,17 +83,27 @@ function getPointGen() {
 	if (hasUpgrade("k", 13)) gain = gain.times(upgradeEffect("k", 13))
 	if (hasUpgrade("k", 15)) gain = gain.times(upgradeEffect("k", 15))
 	gain = gain.times(buyableEffect("p", 11))
+	if (player.points.gte(1e6)) gain = gain.pow(new Decimal(1).sub(Decimal.log(player.points.sub(1e6), 10).div(30)))
 	return gain
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
-function addedPlayerData() { return {
+function addedPlayerData() {
+	return {
 	UnlockedLayers: [],
 	UnlockedUpgrades: []
 }}
 
 // Display extra things at the top of the page
 var displayThings = [
+	function() {
+	return "TPS = "+format(player.p.fps)+"s/tick"
+	},
+	function() {
+		if (player.points.gte(1e6)) {
+			return `Distance is softcapped by ^${new Decimal(1).sub(Decimal.log(player.points.sub(1e6), 10).div(30))}`
+		}
+	}
 ]
 
 // Determines when the game "ends"

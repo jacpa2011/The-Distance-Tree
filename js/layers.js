@@ -134,17 +134,20 @@ addLayer("k", {
     }
 )
 
+////////////////---------------////////////////////////////
+
 addLayer("p", {
     name: "power", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "P", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
-        unlocked: true,
+        unlocked: false,
 		points: new Decimal(0),
         total: new Decimal(0),
+        fps: new Decimal(0)
     }},
     color: "#F4BC1C",
-    requires: new Decimal(500), // Can be a function that takes requirement increases into account
+    requires: new Decimal(100), // Can be a function that takes requirement increases into account
     resource: "Power", // Name of prestige currency
     baseResource: "Knowledge", // Name of resource prestige is based on
     baseAmount() {return player.k.points}, // Get the current amount of baseResource
@@ -161,19 +164,15 @@ addLayer("p", {
     hotkeys: [
         {key: "p", description: "p: Reset for Power", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){
-        if (hasUpgrade("k", 15)) {
-            if (!player.UnlockedLayers.includes("p") == true) {
-                player.UnlockedLayers.push("p")
-            }
-
-            return true
-        }
-        if (player.UnlockedLayers.includes("p") == true) {
-            return true
-        }
-    },
     branches: ["k"],
+    update(diff) {
+        if (player.k.points.gte(100)) {
+            player[this.layer].unlocked = true
+        }
+        let tooltip1 = tmp.p.buyables[11].effect
+        tmp.p.buyables[11].tooltip = `Currently: ${format(tooltip1)}x`
+        player.p.fps = diff
+    },
     upgrades: {
         11: {
             title: "Turning books into energy",
@@ -187,9 +186,10 @@ addLayer("p", {
         12: {
             title: "I like energy bars",
             description: "Boost <b>Drinkin Energy Bars</b> based on OoMs of distance",
+            tooltip: "1.14^floor(log(meters+1))",
             cost: new Decimal(3),
             effect() {
-            let output = Decimal.pow(1.14, Decimal.floor(Decimal.log(player.points.add(1), 10))).max(1)
+            let output = Decimal.pow(1.14, Decimal.floor(Decimal.log(player.points.add(1), 10)))
             return output
             },
             unlocked() {
@@ -209,11 +209,11 @@ addLayer("p", {
     buyables: {
         11: {
             title: "Diet",
-            display() {return autoThisBuyableDisplay("Double distance each time you buy this.", this)
+            display() {return autoThisBuyableDisplay("Multiply Disance by 2^(amount/2)", this)
             },
             cost(x) { return Decimal.pow(10, x) },
             unlocked() {if (hasUpgrade("p", 11)) {return true}},
-            canAfford() { if (player.k.points.gte(this.cost())) {return true} else {return false}},
+            canAfford() { if (player.k.points.gte(this.cost())) {return true}},
             buy() {
                 player.k.points = player.k.points.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
@@ -221,15 +221,15 @@ addLayer("p", {
             effect() {
                 let output = Decimal.pow(2, getBuyableAmount(this.layer, this.id).div(2))
                 return output
-            }
+            },
+            buyMax() {return true},
         },
     },
     milestones: {
         0: {
-            unlocked() {return player.p.points.gte(1)},
             requirementDescription: "Get 2 total Power",
             effectDescription: "Gain 10% of Knowledge per second",
-            done() { return player.p.total.gte(1) }
+            done() { return player.p.total.gte(1.9) }
         }
     }
 })
@@ -258,7 +258,7 @@ addLayer("a", {
                 player[this.layer].points = Decimal.add(player[this.layer].points, 1)
             }},
         12: {
-            name: "Faster then Usian Bolt",
+            name: "Faster then Usain Bolt",
             done() {if (hasUpgrade("k", 15)) {return true}}, 
             goalTooltip: "Get the fifth upgrade.", // Shows when achievement is not completed
             doneTooltip: "Get the fifth upgrade.", // Showed when the achievement is completed
