@@ -144,7 +144,9 @@ addLayer("p", {
         unlocked: false,
 		points: new Decimal(0),
         total: new Decimal(0),
-        fps: new Decimal(0)
+        fps: new Decimal(0),
+        spin: decimalZero,
+        spincooldown: new Decimal(10)
     }},
     color: "#F4BC1C",
     requires: new Decimal(100), // Can be a function that takes requirement increases into account
@@ -172,6 +174,8 @@ addLayer("p", {
         let tooltip1 = tmp.p.buyables[11].effect
         tmp.p.buyables[11].tooltip = `Currently: ${format(tooltip1)}x`
         player.p.fps = diff
+        player.p.spin = player.p.spin.add(player.p.spin.mul(new Decimal(diff).mul(player.p.spincooldown.pow(-1))))
+        player.p.spincooldown = buyableEffect("p", 12).abs()
     },
     upgrades: {
         11: {
@@ -205,11 +209,26 @@ addLayer("p", {
                 return format(upgradeEffect(this.layer, this.id))+"x"
             },
         },
+        13: {
+            title: "Angular momentum?",
+            description: "Unlock a new tab.",
+            tooltip: "",
+            cost: new Decimal(6),
+            unlocked() {
+                if (hasUpgrade("p", 12)) {
+                    player.UnlockedUpgrades.push(`p13`)
+                    return true
+                }
+                if (player.UnlockedUpgrades.includes(`p13`)) {
+                    return true
+                }
+            },
+        },
     },
     buyables: {
         11: {
             title: "Diet",
-            display() {return autoThisBuyableDisplay("Multiply Disance by 2^(amount/2)", this)
+            display() {return autoThisBuyableDisplay("Multiply Disance by 2^(amount/2)", this, " Knowledge")
             },
             cost(x) { return Decimal.pow(10, x) },
             unlocked() {if (hasUpgrade("p", 11)) {return true}},
@@ -222,14 +241,100 @@ addLayer("p", {
                 let output = Decimal.pow(2, getBuyableAmount(this.layer, this.id).div(2))
                 return output
             },
-            buyMax() {return true},
         },
+        12: {
+            title: "FASTER!",
+            display() {return autoThisBuyableDisplay("Divide Rotation cooldown by 2", this, " Power")},
+            style() {
+                if (player.p.points.gte(this.cost())) {
+                return {
+                    "background-color": "lightblue",
+                }}
+                else {
+                    return {
+                        "background-color": "#bf8f8f",
+                    }  
+                }
+            },
+            cost(x) { return (new Decimal(2).pow(x)) },
+            unlocked() {return true},
+            canAfford() { if (player.p.points.gte(this.cost())) {return true}},
+            buy() {
+                player.p.points = player.p.points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            effect() {
+                let output = new Decimal(10).div(new Decimal(2).pow(getBuyableAmount(this.layer, this.id)))
+                return output
+            },
+        },
+    },
+    clickables: {
+        11: {
+            display() {return `<h3>Add 1 spin</h3>`},
+            canClick() {return true},
+            style() {
+                return {
+                    "background-color": "lightblue",
+                }
+            },
+            onClick() {player.p.spin = player.p.spin.add(1)}
+        }
+    },
+    bars: {
+        11: {
+            direction: RIGHT,
+            width: 400,
+            height: 50,
+            fillStyle: {'background-color' : "lightblue"},
+            borderStyle: {"border-width": "7px"},
+            progress() {
+                let output = player.p.spin.div(Decimal.log(player.p.spin.add(1000), 1000).floor().pow_base(1000))
+                return output.div(1000)
+            }
+        }
     },
     milestones: {
         0: {
             requirementDescription: "Get 2 total Power",
             effectDescription: "Gain 10% of Knowledge per second",
             done() { return player.p.total.gte(1.9) }
+        }
+    },
+    tabFormat: {
+        "Power": {
+            content:[
+                "main-display",
+                "prestige-button",
+                "resource-display",
+                "milestones",
+                "blank",
+                ["buyable", 11],
+                "blank",
+                "upgrades"
+            ],
+            unlocked() {if (hasUpgrade("p", 13)) {return true} else {return false}}
+        },
+        "Spin": {
+            content:[
+                ["display-text", function() {
+                    let output = player.p.spin
+                    return `<h3>You have <font color="lightblue"><h2>${format(output)}</h2></font> Rotation(s)</h3>`}],
+                ["display-text", function() {
+                    let output = player.p.spincooldown
+                    return `(Which is doubling every ${formatSmall(output)} second(s))`
+                }],
+                ["display-text", function() {
+                    let output = Decimal.log(new Decimal(player.p.spin).add(10), 10).pow(0.5)
+                    return `(Which is also multiplying distance by x${format(output)})`
+                }],
+                "blank",
+                ["bar", 11],
+                    "blank","blank","blank","blank","blank","blank",
+                ["clickable", 11],"blank",
+                ["buyable", 12]
+            ],
+            unlocked() {if (hasUpgrade("p", 13)) {return true} else {return false}},
         }
     }
 })
